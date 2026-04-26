@@ -1,0 +1,6 @@
+interface:
+  display_name: "Damcuoithinhthu"
+  short_description: "Repo-specific patterns and workflows for damcuoithinhthu"
+  default_prompt: "Use the damcuoithinhthu repo skill to follow existing architecture, testing, and workflow conventions."
+policy:
+  allow_implicit_invocation: true
