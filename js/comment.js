@@ -1,4 +1,4 @@
-import { db } from './firebase-config.js';
+import { db, auth } from './firebase-config.js';
 import {
     collection, addDoc, doc, getDoc, getDocs, updateDoc, deleteDoc,
     query, where, orderBy, limit, startAfter, serverTimestamp, increment
@@ -13,6 +13,20 @@ export const comment = (() => {
 
     const owns = storage('owns');
     const config = storage('config');
+    const pageDocCache = {};
+
+    const clearPageCache = () => {
+        Object.keys(pageDocCache).forEach((k) => delete pageDocCache[k]);
+    };
+
+    const deleteReplies = async (parentId) => {
+        const repliesSnap = await getDocs(query(
+            collection(db, 'comments'),
+            where('parentId', '==', parentId)
+        ));
+        const promises = repliesSnap.docs.map((d) => deleteDoc(doc(db, 'comments', d.id)));
+        await Promise.all(promises);
+    };
 
     const remove = async (button) => {
         if (!confirm('Bạn chắc chắn chưa?')) {
@@ -23,10 +37,12 @@ export const comment = (() => {
         const btn = util.disableButton(button);
 
         try {
+            await deleteReplies(id);
             await deleteDoc(doc(db, 'comments', id));
             const el = document.getElementById(id);
             if (el) el.remove();
             owns.unset(id);
+            clearPageCache();
         } catch (err) {
             alert('Lỗi khi xóa: ' + err.message);
         }
@@ -74,6 +90,7 @@ export const comment = (() => {
             if (presence) presence.disabled = false;
             btn.restore();
 
+            clearPageCache();
             fetchComments();
         } catch (err) {
             form.disabled = false;
@@ -99,6 +116,11 @@ export const comment = (() => {
             return;
         }
 
+        if (!auth.currentUser) {
+            alert('Đang kết nối, vui lòng thử lại sau giây lát.');
+            return;
+        }
+
         if (presence) presence.disabled = true;
 
         const form = document.getElementById(`form-${id ? `inner-${id}` : 'comment'}`);
@@ -117,6 +139,7 @@ export const comment = (() => {
                 parentId: id || null,
                 likes: 0,
                 isAdmin: false,
+                ownerId: auth.currentUser.uid,
                 createdAt: serverTimestamp()
             };
 
@@ -137,6 +160,7 @@ export const comment = (() => {
                 if (innerEl) innerEl.remove();
             }
 
+            clearPageCache();
             fetchComments();
         } catch (err) {
             form.disabled = false;
@@ -211,8 +235,12 @@ export const comment = (() => {
 
                 document.getElementById(`button-${id}`).insertAdjacentElement('afterend', inner);
                 document.getElementById(`form-inner-${id}`).value = data.comment;
+            } else {
+                changeButton(id, false);
+                alert('Bình luận không còn tồn tại.');
             }
         } catch (err) {
+            changeButton(id, false);
             alert('Lỗi: ' + err.message);
         }
 
@@ -225,30 +253,49 @@ export const comment = (() => {
         try {
             const perPage = pagination.getPer();
             const nextStart = pagination.getNext();
+            const pageIndex = perPage > 0 ? Math.floor(nextStart / perPage) : 0;
 
-            let q = query(
-                collection(db, 'comments'),
-                where('parentId', '==', null),
-                orderBy('createdAt', 'desc'),
-                limit(perPage)
-            );
+            let q;
 
-            if (nextStart > 0) {
-                const allParents = query(
+            if (pageIndex === 0) {
+                q = query(
+                    collection(db, 'comments'),
+                    where('parentId', '==', null),
+                    orderBy('createdAt', 'desc'),
+                    limit(perPage)
+                );
+            } else if (pageDocCache[pageIndex - 1]) {
+                q = query(
+                    collection(db, 'comments'),
+                    where('parentId', '==', null),
+                    orderBy('createdAt', 'desc'),
+                    startAfter(pageDocCache[pageIndex - 1]),
+                    limit(perPage)
+                );
+            } else {
+                const skipQuery = query(
                     collection(db, 'comments'),
                     where('parentId', '==', null),
                     orderBy('createdAt', 'desc'),
                     limit(nextStart)
                 );
-                const skipSnap = await getDocs(allParents);
+                const skipSnap = await getDocs(skipQuery);
                 const docs = skipSnap.docs;
                 if (docs.length > 0) {
                     const lastDoc = docs[docs.length - 1];
+                    pageDocCache[pageIndex - 1] = lastDoc;
                     q = query(
                         collection(db, 'comments'),
                         where('parentId', '==', null),
                         orderBy('createdAt', 'desc'),
                         startAfter(lastDoc),
+                        limit(perPage)
+                    );
+                } else {
+                    q = query(
+                        collection(db, 'comments'),
+                        where('parentId', '==', null),
+                        orderBy('createdAt', 'desc'),
                         limit(perPage)
                     );
                 }
@@ -257,6 +304,10 @@ export const comment = (() => {
             const snapshot = await getDocs(q);
             const comments = document.getElementById('comments');
             pagination.setResultData(snapshot.docs.length);
+
+            if (snapshot.docs.length > 0) {
+                pageDocCache[pageIndex] = snapshot.docs[snapshot.docs.length - 1];
+            }
 
             if (snapshot.docs.length === 0) {
                 comments.innerHTML = `<div class="h6 text-center fw-bold p-4 my-3 bg-theme-${theme.isDarkMode('dark', 'light')} rounded-4 shadow">Hãy là người đầu tiên gửi lời chúc nhé!</div>`;
@@ -274,6 +325,7 @@ export const comment = (() => {
                     likes: data.likes || 0,
                     like: { love: data.likes || 0 },
                     is_admin: data.isAdmin || false,
+                    ownerId: data.ownerId || null,
                     created_at: data.createdAt ? formatDate(data.createdAt.toDate()) : '',
                     comments: []
                 };
@@ -294,6 +346,7 @@ export const comment = (() => {
                         likes: rd.likes || 0,
                         like: { love: rd.likes || 0 },
                         is_admin: rd.isAdmin || false,
+                        ownerId: rd.ownerId || null,
                         created_at: rd.createdAt ? formatDate(rd.createdAt.toDate()) : '',
                         comments: []
                     };

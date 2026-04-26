@@ -6,6 +6,15 @@ import {
     signInWithEmailAndPassword, signOut, onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
+const deleteReplies = async (parentId) => {
+    const repliesSnap = await getDocs(query(
+        collection(db, 'comments'),
+        where('parentId', '==', parentId)
+    ));
+    const promises = repliesSnap.docs.map((d) => deleteDoc(doc(db, 'comments', d.id)));
+    await Promise.all(promises);
+};
+
 // ==================== AUTH ====================
 const dashboardAuth = (() => {
     const login = async () => {
@@ -175,6 +184,7 @@ const dashboardComments = (() => {
         if (!confirm('Bạn chắc chắn muốn xóa lời chúc này?')) return;
 
         try {
+            await deleteReplies(id);
             await deleteDoc(doc(db, 'comments', id));
             allComments = allComments.filter((c) => c.id !== id);
             renderTable(allComments);

@@ -32,16 +32,22 @@ const firebaseConfig = {
 1. Vào **Build > Firestore Database**
 2. Nhấn **"Create database"**
 3. Chọn vị trí server gần nhất (ví dụ: `asia-southeast1` cho Việt Nam)
-4. Chọn **"Start in test mode"** (để test trước)
+4. Chọn **"Start in production mode"**
 5. Sau khi tạo xong, vào tab **Rules** và dán nội dung từ file `firestore.rules`
+
+> ⚠️ **Quan trọng:** Luôn sử dụng "production mode" và deploy rules từ file `firestore.rules` ngay lập tức. Không bao giờ để Firestore ở chế độ "test mode" trên production.
 
 ## 4. Bật Authentication
 
 1. Vào **Build > Authentication**
 2. Nhấn **"Get started"**
 3. Bật phương thức **"Email/Password"**
-4. Vào tab **Users** > nhấn **"Add user"**
-5. Nhập email và mật khẩu cho tài khoản admin
+4. Bật **"Anonymous"** (để khách có thể gửi lời chúc)
+5. Vào tab **Users** > nhấn **"Add user"**
+6. Nhập email và mật khẩu cho tài khoản admin
+7. **Xác nhận email** (verify email) cho tài khoản admin — bắt buộc để đăng nhập dashboard
+
+> ⚠️ **Bảo mật:** Sau khi tạo tài khoản admin, vào **Authentication > Settings > User actions** và **tắt "Allow users to sign up"** (bỏ chọn "Enable create") để ngăn người lạ tạo tài khoản admin mới.
 
 ## 5. Tạo config ban đầu (tùy chọn)
 
@@ -76,6 +82,7 @@ firebase deploy
 | parentId | string/null | ID comment cha (null nếu là comment gốc) |
 | likes | number | Số lượt thích |
 | isAdmin | boolean | Là admin hay không |
+| ownerId | string | UID của người tạo (anonymous auth) |
 | createdAt | timestamp | Thời gian tạo |
 | updatedAt | timestamp | Thời gian cập nhật (khi sửa) |
 

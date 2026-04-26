@@ -1,3 +1,4 @@
+import { auth } from './firebase-config.js';
 import { util } from './util.js';
 import { theme } from './theme.js';
 import { storage } from './storage.js';
@@ -58,11 +59,13 @@ export const card = (() => {
             action += `<button style="font-size: 0.8rem;" onclick="comment.reply(this)" data-uuid="${comment.uuid}" class="btn btn-sm btn-outline-${theme.isDarkMode('light', 'dark')} rounded-3 py-0 me-1">Trả lời</button>`;
         }
 
-        if (owns.has(comment.uuid) && config.get('can_edit') !== false) {
+        const isOwner = owns.has(comment.uuid) || (auth.currentUser && comment.ownerId && auth.currentUser.uid === comment.ownerId);
+
+        if (isOwner && config.get('can_edit') !== false) {
             action += `<button style="font-size: 0.8rem;" onclick="comment.edit(this)" data-uuid="${comment.uuid}" class="btn btn-sm btn-outline-${theme.isDarkMode('light', 'dark')} rounded-3 py-0 me-1">Sửa</button>`;
         }
 
-        if (owns.has(comment.uuid) && config.get('can_delete') !== false) {
+        if (isOwner && config.get('can_delete') !== false) {
             action += `<button style="font-size: 0.8rem;" onclick="comment.remove(this)" data-uuid="${comment.uuid}" class="btn btn-sm btn-outline-${theme.isDarkMode('light', 'dark')} rounded-3 py-0">Xóa</button>`;
         }
 
