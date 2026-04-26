@@ -15,7 +15,7 @@ const dashboardAuth = (() => {
         const btn = document.getElementById('btn-login');
 
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>\u0110ang x\u00e1c th\u1ef1c...';
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Đang xác thực...';
         errorEl.style.display = 'none';
 
         try {
@@ -26,22 +26,22 @@ const dashboardAuth = (() => {
         }
 
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket me-1"></i>\u0110\u0103ng nh\u1eadp';
+        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket me-1"></i>Đăng nhập';
     };
 
     const logout = async () => {
-        if (!confirm('B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n \u0111\u0103ng xu\u1ea5t?')) return;
+        if (!confirm('Bạn chắc chắn muốn đăng xuất?')) return;
         await signOut(auth);
     };
 
     const getErrorMessage = (code) => {
         switch (code) {
-            case 'auth/user-not-found': return 'T\u00e0i kho\u1ea3n kh\u00f4ng t\u1ed3n t\u1ea1i';
-            case 'auth/wrong-password': return 'M\u1eadt kh\u1ea9u kh\u00f4ng \u0111\u00fang';
-            case 'auth/invalid-email': return 'Email kh\u00f4ng h\u1ee3p l\u1ec7';
-            case 'auth/invalid-credential': return 'Th\u00f4ng tin \u0111\u0103ng nh\u1eadp kh\u00f4ng \u0111\u00fang';
-            case 'auth/too-many-requests': return 'Qu\u00e1 nhi\u1ec1u l\u1ea7n th\u1eed. Vui l\u00f2ng \u0111\u1ee3i.';
-            default: return 'L\u1ed7i \u0111\u0103ng nh\u1eadp. Vui l\u00f2ng th\u1eed l\u1ea1i.';
+            case 'auth/user-not-found': return 'Tài khoản không tồn tại';
+            case 'auth/wrong-password': return 'Mật khẩu không đúng';
+            case 'auth/invalid-email': return 'Email không hợp lệ';
+            case 'auth/invalid-credential': return 'Thông tin đăng nhập không đúng';
+            case 'auth/too-many-requests': return 'Quá nhiều lần thử. Vui lòng đợi.';
+            default: return 'Lỗi đăng nhập. Vui lòng thử lại.';
         }
     };
 
@@ -73,7 +73,7 @@ const dashboardStats = (() => {
             document.getElementById('stat-present').textContent = present;
             document.getElementById('stat-absent').textContent = absent;
         } catch (err) {
-            console.error('L\u1ed7i t\u1ea3i stats:', err);
+            console.error('Lỗi tải stats:', err);
         }
     };
 
@@ -112,14 +112,14 @@ const dashboardComments = (() => {
             renderTable(allComments);
             renderRecent(allComments.slice(0, 5));
         } catch (err) {
-            console.error('L\u1ed7i t\u1ea3i comments:', err);
+            console.error('Lỗi tải comments:', err);
         }
     };
 
     const renderTable = (comments) => {
         const tbody = document.getElementById('comments-table-body');
         if (comments.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted p-4">Ch\u01b0a c\u00f3 l\u1eddi ch\u00fac n\u00e0o</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted p-4">Chưa có lời chúc nào</td></tr>';
             return;
         }
 
@@ -128,7 +128,7 @@ const dashboardComments = (() => {
                 <td class="ps-4">
                     <span class="fw-semibold">${escapeHtml(c.name)}</span>
                     ${c.isAdmin ? '<i class="fa-solid fa-certificate text-primary ms-1"></i>' : ''}
-                    ${c.parentId ? '<span class="badge bg-secondary ms-1">Tr\u1ea3 l\u1eddi</span>' : ''}
+                    ${c.parentId ? '<span class="badge bg-secondary ms-1">Trả lời</span>' : ''}
                 </td>
                 <td style="max-width: 300px;">
                     <span class="text-truncate d-inline-block" style="max-width: 280px;">${escapeHtml(c.comment)}</span>
@@ -150,7 +150,7 @@ const dashboardComments = (() => {
     const renderRecent = (comments) => {
         const container = document.getElementById('recent-comments');
         if (comments.length === 0) {
-            container.innerHTML = '<div class="text-center text-muted p-4">Ch\u01b0a c\u00f3 l\u1eddi ch\u00fac n\u00e0o</div>';
+            container.innerHTML = '<div class="text-center text-muted p-4">Chưa có lời chúc nào</div>';
             return;
         }
 
@@ -172,7 +172,7 @@ const dashboardComments = (() => {
     };
 
     const remove = async (id) => {
-        if (!confirm('B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a l\u1eddi ch\u00fac n\u00e0y?')) return;
+        if (!confirm('Bạn chắc chắn muốn xóa lời chúc này?')) return;
 
         try {
             await deleteDoc(doc(db, 'comments', id));
@@ -181,7 +181,7 @@ const dashboardComments = (() => {
             renderRecent(allComments.slice(0, 5));
             dashboardStats.load();
         } catch (err) {
-            alert('L\u1ed7i: ' + err.message);
+            alert('Lỗi: ' + err.message);
         }
     };
 
@@ -204,23 +204,23 @@ const dashboardComments = (() => {
 
     const exportCSV = () => {
         if (allComments.length === 0) {
-            alert('Kh\u00f4ng c\u00f3 d\u1eef li\u1ec7u \u0111\u1ec3 xu\u1ea5t');
+            alert('Không có dữ liệu để xuất');
             return;
         }
 
-        const header = 'T\u00ean,L\u1eddi ch\u00fac,Tham d\u1ef1,Likes,Th\u1eddi gian\n';
+        const header = 'Tên,Lời chúc,Tham dự,Likes,Thời gian\n';
         const rows = allComments
             .filter((c) => !c.parentId)
             .map((c) => {
                 const name = `"${(c.name || '').replace(/"/g, '""')}"`;
                 const comment = `"${(c.comment || '').replace(/"/g, '""')}"`;
-                const presence = c.presence ? 'C\u00f3' : 'Kh\u00f4ng';
+                const presence = c.presence ? 'Có' : 'Không';
                 const likes = c.likes || 0;
                 const date = formatDate(c.createdAt);
                 return `${name},${comment},${presence},${likes},${date}`;
             }).join('\n');
 
-        const bom = '\uFEFF';
+        const bom = '﻿';
         const blob = new Blob([bom + header + rows], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
@@ -264,14 +264,14 @@ const dashboardGuests = (() => {
 
             renderTable(allGuests);
         } catch (err) {
-            console.error('L\u1ed7i t\u1ea3i guests:', err);
+            console.error('Lỗi tải guests:', err);
         }
     };
 
     const renderTable = (guests) => {
         const tbody = document.getElementById('guests-table-body');
         if (guests.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted p-4">Ch\u01b0a c\u00f3 kh\u00e1ch m\u1eddi n\u00e0o</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted p-4">Chưa có khách mời nào</td></tr>';
             return;
         }
 
@@ -281,8 +281,8 @@ const dashboardGuests = (() => {
                 <td class="fw-semibold">${escapeHtml(g.name)}</td>
                 <td class="text-center">
                     ${g.presence
-                        ? '<span class="badge rounded-pill bg-success-subtle text-success">S\u1ebd tham d\u1ef1</span>'
-                        : '<span class="badge rounded-pill bg-danger-subtle text-danger">Ch\u01b0a ch\u1eafc</span>'
+                        ? '<span class="badge rounded-pill bg-success-subtle text-success">Sẽ tham dự</span>'
+                        : '<span class="badge rounded-pill bg-danger-subtle text-danger">Chưa chắc</span>'
                     }
                 </td>
                 <td><small class="text-muted">${formatDate(g.createdAt)}</small></td>
@@ -320,7 +320,7 @@ const dashboardSettings = (() => {
                 document.getElementById('setting-delete').checked = data.can_delete !== false;
             }
         } catch (err) {
-            console.error('L\u1ed7i t\u1ea3i settings:', err);
+            console.error('Lỗi tải settings:', err);
         }
     };
 
@@ -333,23 +333,23 @@ const dashboardSettings = (() => {
                 updatedAt: serverTimestamp()
             });
         } catch (err) {
-            alert('L\u1ed7i l\u01b0u c\u00e0i \u0111\u1eb7t: ' + err.message);
+            alert('Lỗi lưu cài đặt: ' + err.message);
         }
     };
 
     const clearAllComments = async () => {
-        if (!confirm('B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n X\u00d3A T\u1ea4T C\u1ea2 b\u00ecnh lu\u1eadn? H\u00e0nh \u0111\u1ed9ng n\u00e0y KH\u00d4NG TH\u1ec2 ho\u00e0n t\u00e1c!')) return;
-        if (!confirm('X\u00e1c nh\u1eadn l\u1ea7n cu\u1ed1i: X\u00f3a t\u1ea5t c\u1ea3?')) return;
+        if (!confirm('Bạn chắc chắn muốn XÓA TẤT CẢ bình luận? Hành động này KHÔNG THỂ hoàn tác!')) return;
+        if (!confirm('Xác nhận lần cuối: Xóa tất cả?')) return;
 
         try {
             const snapshot = await getDocs(collection(db, 'comments'));
             const deletePromises = snapshot.docs.map((d) => deleteDoc(doc(db, 'comments', d.id)));
             await Promise.all(deletePromises);
 
-            alert('\u0110\u00e3 x\u00f3a t\u1ea5t c\u1ea3 b\u00ecnh lu\u1eadn!');
+            alert('Đã xóa tất cả bình luận!');
             dashboardComments.refresh();
         } catch (err) {
-            alert('L\u1ed7i: ' + err.message);
+            alert('Lỗi: ' + err.message);
         }
     };
 

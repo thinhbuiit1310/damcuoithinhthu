@@ -7,7 +7,7 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Comments: ai c\u0169ng \u0111\u1ecdc, t\u1ea1o \u0111\u01b0\u1ee3c; update ch\u1ec9 cho ph\u00e9p thay \u0111\u1ed5i likes ho\u1eb7c admin; x\u00f3a ch\u1ec9 admin
+    // Comments: ai cũng đọc, tạo được; update chỉ cho phép thay đổi likes hoặc admin; xóa chỉ admin
     match /comments/{commentId} {
       allow read: if true;
       allow create: if request.resource.data.keys().hasOnly([
@@ -24,7 +24,7 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Config: ai c\u0169ng \u0111\u1ecdc, ch\u1ec9 admin ghi
+    // Config: ai cũng đọc, chỉ admin ghi
     match /config/{docId} {
       allow read: if true;
       allow write: if isAdmin();

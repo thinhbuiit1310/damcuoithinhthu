@@ -15,7 +15,7 @@ export const comment = (() => {
     const config = storage('config');
 
     const remove = async (button) => {
-        if (!confirm('B\u1ea1n ch\u1eafc ch\u1eafn ch\u01b0a?')) {
+        if (!confirm('Bạn chắc chắn chưa?')) {
             return;
         }
 
@@ -28,7 +28,7 @@ export const comment = (() => {
             if (el) el.remove();
             owns.unset(id);
         } catch (err) {
-            alert('L\u1ed7i khi x\u00f3a: ' + err.message);
+            alert('Lỗi khi xóa: ' + err.message);
         }
 
         btn.restore();
@@ -80,7 +80,7 @@ export const comment = (() => {
             if (cancel) cancel.disabled = false;
             if (presence) presence.disabled = false;
             btn.restore();
-            alert('L\u1ed7i khi c\u1eadp nh\u1eadt: ' + err.message);
+            alert('Lỗi khi cập nhật: ' + err.message);
         }
     };
 
@@ -89,13 +89,13 @@ export const comment = (() => {
 
         const name = document.getElementById('form-name');
         if (name.value.length == 0) {
-            alert('Vui l\u00f2ng \u0111i\u1ec1n t\u00ean c\u1ee7a b\u1ea1n');
+            alert('Vui lòng điền tên của bạn');
             return;
         }
 
         const presence = document.getElementById('form-presence');
         if (!id && presence && presence.value == "0") {
-            alert('Vui l\u00f2ng l\u1ef1a ch\u1ecdn b\u1ea1n c\u00f3 th\u1ec3 tham d\u1ef1 \u0111\u00e1m c\u01b0\u1edbi c\u1ee7a ch\u00fang t\u00f4i hay kh\u00f4ng?');
+            alert('Vui lòng lựa chọn bạn có thể tham dự đám cưới của chúng tôi hay không?');
             return;
         }
 
@@ -143,12 +143,12 @@ export const comment = (() => {
             if (cancel) cancel.disabled = false;
             if (presence) presence.disabled = false;
             btn.restore();
-            alert('L\u1ed7i khi g\u1eedi: ' + err.message);
+            alert('Lỗi khi gửi: ' + err.message);
         }
     };
 
     const cancel = (id) => {
-        if (document.getElementById(`form-inner-${id}`).value.length === 0 || confirm('B\u1ea1n ch\u1eafc ch\u1eafn ch\u01b0a?')) {
+        if (document.getElementById(`form-inner-${id}`).value.length === 0 || confirm('Bạn chắc chắn chưa?')) {
             changeButton(id, false);
             document.getElementById(`inner-${id}`).remove();
         }
@@ -167,11 +167,11 @@ export const comment = (() => {
         inner.classList.add('my-2');
         inner.id = `inner-${id}`;
         inner.innerHTML = `
-        <label for="form-inner-${id}" class="form-label">Tr\u1ea3 l\u1eddi</label>
-        <textarea class="form-control shadow-sm rounded-3 mb-2" id="form-inner-${id}" placeholder="Nh\u1eadp ph\u1ea3n h\u1ed3i l\u1eddi ch\u00fac m\u1eebng"></textarea>
+        <label for="form-inner-${id}" class="form-label">Trả lời</label>
+        <textarea class="form-control shadow-sm rounded-3 mb-2" id="form-inner-${id}" placeholder="Nhập phản hồi lời chúc mừng"></textarea>
         <div class="d-flex flex-wrap justify-content-end align-items-center mb-0">
-            <button style="font-size: 0.8rem;" onclick="comment.cancel('${id}')" class="btn btn-sm btn-outline-${theme.isDarkMode('light', 'dark')} rounded-3 py-0 me-1">H\u1ee7y b\u1ecf</button>
-            <button style="font-size: 0.8rem;" onclick="comment.send(this)" data-uuid="${id}" class="btn btn-sm btn-outline-${theme.isDarkMode('light', 'dark')} rounded-3 py-0">G\u1eedi</button>
+            <button style="font-size: 0.8rem;" onclick="comment.cancel('${id}')" class="btn btn-sm btn-outline-${theme.isDarkMode('light', 'dark')} rounded-3 py-0 me-1">Hủy bỏ</button>
+            <button style="font-size: 0.8rem;" onclick="comment.send(this)" data-uuid="${id}" class="btn btn-sm btn-outline-${theme.isDarkMode('light', 'dark')} rounded-3 py-0">Gửi</button>
         </div>`;
 
         document.getElementById(`button-${id}`).insertAdjacentElement('afterend', inner);
@@ -197,23 +197,23 @@ export const comment = (() => {
                 inner.classList.add('my-2');
                 inner.id = `inner-${id}`;
                 inner.innerHTML = `
-                <label for="form-inner-${id}" class="form-label">S\u1eeda</label>
+                <label for="form-inner-${id}" class="form-label">Sửa</label>
                 ${document.getElementById(id).getAttribute('data-parent') === 'true' ? `
                 <select class="form-select shadow-sm mb-2" id="form-inner-presence-${id}">
-                    <option value="1" ${data.presence ? 'selected' : ''}>Ch\u1eafc ch\u1eafn c\u00f3 m\u1eb7t</option>
-                    <option value="2" ${data.presence ? '' : 'selected'}>Ch\u01b0a ch\u1eafc ch\u1eafn</option>
+                    <option value="1" ${data.presence ? 'selected' : ''}>Chắc chắn có mặt</option>
+                    <option value="2" ${data.presence ? '' : 'selected'}>Chưa chắc chắn</option>
                 </select>` : ''}
-                <textarea class="form-control shadow-sm rounded-3 mb-2" id="form-inner-${id}" placeholder="Nh\u1eadp n\u1ed9i dung c\u1eadp nh\u1eadt"></textarea>
+                <textarea class="form-control shadow-sm rounded-3 mb-2" id="form-inner-${id}" placeholder="Nhập nội dung cập nhật"></textarea>
                 <div class="d-flex flex-wrap justify-content-end align-items-center mb-0">
-                    <button style="font-size: 0.8rem;" onclick="comment.cancel('${id}')" class="btn btn-sm btn-outline-${theme.isDarkMode('light', 'dark')} rounded-3 py-0 me-1">H\u1ee7y b\u1ecf</button>
-                    <button style="font-size: 0.8rem;" onclick="comment.update(this)" data-uuid="${id}" class="btn btn-sm btn-outline-${theme.isDarkMode('light', 'dark')} rounded-3 py-0">C\u1eadp nh\u1eadt</button>
+                    <button style="font-size: 0.8rem;" onclick="comment.cancel('${id}')" class="btn btn-sm btn-outline-${theme.isDarkMode('light', 'dark')} rounded-3 py-0 me-1">Hủy bỏ</button>
+                    <button style="font-size: 0.8rem;" onclick="comment.update(this)" data-uuid="${id}" class="btn btn-sm btn-outline-${theme.isDarkMode('light', 'dark')} rounded-3 py-0">Cập nhật</button>
                 </div>`;
 
                 document.getElementById(`button-${id}`).insertAdjacentElement('afterend', inner);
                 document.getElementById(`form-inner-${id}`).value = data.comment;
             }
         } catch (err) {
-            alert('L\u1ed7i: ' + err.message);
+            alert('Lỗi: ' + err.message);
         }
 
         button.innerText = tmp;
@@ -259,7 +259,7 @@ export const comment = (() => {
             pagination.setResultData(snapshot.docs.length);
 
             if (snapshot.docs.length === 0) {
-                comments.innerHTML = `<div class="h6 text-center fw-bold p-4 my-3 bg-theme-${theme.isDarkMode('dark', 'light')} rounded-4 shadow">H\u00e3y l\u00e0 ng\u01b0\u1eddi \u0111\u1ea7u ti\u00ean g\u1eedi l\u1eddi ch\u00fac nh\u00e9!</div>`;
+                comments.innerHTML = `<div class="h6 text-center fw-bold p-4 my-3 bg-theme-${theme.isDarkMode('dark', 'light')} rounded-4 shadow">Hãy là người đầu tiên gửi lời chúc nhé!</div>`;
                 return;
             }
 
@@ -304,9 +304,9 @@ export const comment = (() => {
 
             comments.innerHTML = parentComments.map((c) => card.renderContent(c)).join('');
         } catch (err) {
-            console.error('L\u1ed7i t\u1ea3i comments:', err);
+            console.error('Lỗi tải comments:', err);
             const comments = document.getElementById('comments');
-            comments.innerHTML = `<div class="h6 text-center fw-bold p-4 my-3 bg-theme-${theme.isDarkMode('dark', 'light')} rounded-4 shadow text-danger">L\u1ed7i t\u1ea3i d\u1eef li\u1ec7u. Vui l\u00f2ng th\u1eed l\u1ea1i.</div>`;
+            comments.innerHTML = `<div class="h6 text-center fw-bold p-4 my-3 bg-theme-${theme.isDarkMode('dark', 'light')} rounded-4 shadow text-danger">Lỗi tải dữ liệu. Vui lòng thử lại.</div>`;
         }
     };
 

@@ -103,7 +103,7 @@ export const util = (() => {
         try {
             await navigator.clipboard.writeText(button.getAttribute('data-copy'));
         } catch {
-            alert('L\u1ed7i kh\u00f4ng copy \u0111\u01b0\u1ee3c');
+            alert('Lỗi không copy được');
             return;
         }
 
@@ -179,7 +179,7 @@ export const util = (() => {
             }
             return true;
         } catch (err) {
-            console.error('L\u1ed7i t\u1ea3i config:', err);
+            console.error('Lỗi tải config:', err);
             config.set('can_reply', true);
             config.set('can_edit', true);
             config.set('can_delete', true);

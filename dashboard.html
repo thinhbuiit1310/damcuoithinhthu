@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard - \u0110\u00e1m c\u01b0\u1edbi Th\u1ecbnh & Th\u01b0</title>
+    <title>Dashboard - Đám cưới Thịnh & Thư</title>
 
     <meta name="robots" content="noindex, nofollow">
     <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
@@ -28,20 +28,20 @@
                 <div class="modal-body p-4">
                     <div class="text-center mb-4">
                         <i class="fa-solid fa-heart text-danger" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-2 fw-bold">Th\u1ecbnh & Th\u01b0</h5>
-                        <p class="text-muted small">Dashboard Qu\u1ea3n tr\u1ecb</p>
+                        <h5 class="mt-2 fw-bold">Thịnh & Thư</h5>
+                        <p class="text-muted small">Dashboard Quản trị</p>
                     </div>
                     <div class="mb-3">
                         <label for="loginEmail" class="form-label small fw-semibold">Email</label>
                         <input type="email" class="form-control rounded-3" id="loginEmail" placeholder="admin@example.com">
                     </div>
                     <div class="mb-3">
-                        <label for="loginPassword" class="form-label small fw-semibold">M\u1eadt kh\u1ea9u</label>
-                        <input type="password" class="form-control rounded-3" id="loginPassword" placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022">
+                        <label for="loginPassword" class="form-label small fw-semibold">Mật khẩu</label>
+                        <input type="password" class="form-control rounded-3" id="loginPassword" placeholder="••••••••">
                     </div>
                     <div class="d-grid">
                         <button class="btn btn-primary rounded-3" id="btn-login" onclick="dashboardAuth.login()">
-                            <i class="fa-solid fa-right-to-bracket me-1"></i>\u0110\u0103ng nh\u1eadp
+                            <i class="fa-solid fa-right-to-bracket me-1"></i>Đăng nhập
                         </button>
                     </div>
                     <div id="login-error" class="text-danger text-center small mt-2" style="display: none;"></div>
@@ -57,12 +57,12 @@
         <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top">
             <div class="container-fluid px-4">
                 <a class="navbar-brand fw-bold" href="#">
-                    <i class="fa-solid fa-heart text-danger me-2"></i>Th\u1ecbnh & Th\u01b0
+                    <i class="fa-solid fa-heart text-danger me-2"></i>Thịnh & Thư
                 </a>
                 <div class="d-flex align-items-center gap-3">
                     <span class="text-muted small d-none d-md-inline" id="admin-email"></span>
                     <button class="btn btn-sm btn-outline-secondary rounded-3" onclick="dashboardAuth.logout()">
-                        <i class="fa-solid fa-right-from-bracket me-1"></i>\u0110\u0103ng xu\u1ea5t
+                        <i class="fa-solid fa-right-from-bracket me-1"></i>Đăng xuất
                     </button>
                 </div>
             </div>
@@ -74,22 +74,22 @@
                 <ul class="nav nav-tabs border-0" id="dashboard-tabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active fw-semibold" data-bs-toggle="tab" data-bs-target="#tab-overview" type="button" role="tab">
-                            <i class="fa-solid fa-chart-pie me-1"></i>T\u1ed5ng quan
+                            <i class="fa-solid fa-chart-pie me-1"></i>Tổng quan
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#tab-comments" type="button" role="tab">
-                            <i class="fa-solid fa-comments me-1"></i>L\u1eddi ch\u00fac
+                            <i class="fa-solid fa-comments me-1"></i>Lời chúc
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#tab-guests" type="button" role="tab">
-                            <i class="fa-solid fa-users me-1"></i>Kh\u00e1ch m\u1eddi
+                            <i class="fa-solid fa-users me-1"></i>Khách mời
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#tab-settings" type="button" role="tab">
-                            <i class="fa-solid fa-gear me-1"></i>C\u00e0i \u0111\u1eb7t
+                            <i class="fa-solid fa-gear me-1"></i>Cài đặt
                         </button>
                     </li>
                 </ul>
@@ -102,14 +102,14 @@
 
                 <!-- Overview Tab -->
                 <div class="tab-pane fade show active" id="tab-overview" role="tabpanel">
-                    <h4 class="fw-bold mb-4">T\u1ed5ng quan</h4>
+                    <h4 class="fw-bold mb-4">Tổng quan</h4>
                     <div class="row g-3 mb-4">
                         <div class="col-6 col-xl-3">
                             <div class="card border-0 rounded-4 shadow-sm h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <div class="card-body text-white p-3">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
-                                            <p class="mb-1 small opacity-75">L\u1eddi ch\u00fac</p>
+                                            <p class="mb-1 small opacity-75">Lời chúc</p>
                                             <h3 class="fw-bold mb-0" id="stat-comments">
                                                 <span class="placeholder-wave"><span class="placeholder col-6 rounded"></span></span>
                                             </h3>
@@ -124,7 +124,7 @@
                                 <div class="card-body text-white p-3">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
-                                            <p class="mb-1 small opacity-75">L\u01b0\u1ee3t th\u00edch</p>
+                                            <p class="mb-1 small opacity-75">Lượt thích</p>
                                             <h3 class="fw-bold mb-0" id="stat-likes">
                                                 <span class="placeholder-wave"><span class="placeholder col-6 rounded"></span></span>
                                             </h3>
@@ -139,7 +139,7 @@
                                 <div class="card-body text-white p-3">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
-                                            <p class="mb-1 small opacity-75">S\u1ebd tham d\u1ef1</p>
+                                            <p class="mb-1 small opacity-75">Sẽ tham dự</p>
                                             <h3 class="fw-bold mb-0" id="stat-present">
                                                 <span class="placeholder-wave"><span class="placeholder col-6 rounded"></span></span>
                                             </h3>
@@ -154,7 +154,7 @@
                                 <div class="card-body text-white p-3">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
-                                            <p class="mb-1 small opacity-75">Ch\u01b0a ch\u1eafc</p>
+                                            <p class="mb-1 small opacity-75">Chưa chắc</p>
                                             <h3 class="fw-bold mb-0" id="stat-absent">
                                                 <span class="placeholder-wave"><span class="placeholder col-6 rounded"></span></span>
                                             </h3>
@@ -169,7 +169,7 @@
                     <!-- Recent Comments -->
                     <div class="card border-0 rounded-4 shadow-sm">
                         <div class="card-header bg-white rounded-top-4 border-bottom py-3 px-4">
-                            <h6 class="fw-bold mb-0"><i class="fa-solid fa-clock-rotate-left me-2"></i>L\u1eddi ch\u00fac g\u1ea7n \u0111\u00e2y</h6>
+                            <h6 class="fw-bold mb-0"><i class="fa-solid fa-clock-rotate-left me-2"></i>Lời chúc gần đây</h6>
                         </div>
                         <div class="card-body p-0" id="recent-comments">
                             <div class="text-center p-4">
@@ -182,13 +182,13 @@
                 <!-- Comments Tab -->
                 <div class="tab-pane fade" id="tab-comments" role="tabpanel">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="fw-bold mb-0">Qu\u1ea3n l\u00fd l\u1eddi ch\u00fac</h4>
+                        <h4 class="fw-bold mb-0">Quản lý lời chúc</h4>
                         <div class="d-flex gap-2">
                             <button class="btn btn-sm btn-outline-success rounded-3" onclick="dashboardComments.exportCSV()">
-                                <i class="fa-solid fa-download me-1"></i>Xu\u1ea5t CSV
+                                <i class="fa-solid fa-download me-1"></i>Xuất CSV
                             </button>
                             <button class="btn btn-sm btn-primary rounded-3" onclick="dashboardComments.refresh()">
-                                <i class="fa-solid fa-rotate me-1"></i>L\u00e0m m\u1edbi
+                                <i class="fa-solid fa-rotate me-1"></i>Làm mới
                             </button>
                         </div>
                     </div>
@@ -197,7 +197,7 @@
                         <div class="card-header bg-white rounded-top-4 border-bottom py-3 px-4">
                             <div class="row align-items-center">
                                 <div class="col">
-                                    <input type="text" class="form-control form-control-sm rounded-3" id="search-comments" placeholder="T\u00ecm ki\u1ebfm l\u1eddi ch\u00fac..." oninput="dashboardComments.search(this.value)">
+                                    <input type="text" class="form-control form-control-sm rounded-3" id="search-comments" placeholder="Tìm kiếm lời chúc..." oninput="dashboardComments.search(this.value)">
                                 </div>
                             </div>
                         </div>
@@ -206,12 +206,12 @@
                                 <table class="table table-hover mb-0">
                                     <thead class="table-light">
                                         <tr>
-                                            <th class="ps-4">T\u00ean</th>
-                                            <th>L\u1eddi ch\u00fac</th>
-                                            <th class="text-center">Tham d\u1ef1</th>
+                                            <th class="ps-4">Tên</th>
+                                            <th>Lời chúc</th>
+                                            <th class="text-center">Tham dự</th>
                                             <th class="text-center"><i class="fa-solid fa-heart"></i></th>
-                                            <th>Th\u1eddi gian</th>
-                                            <th class="text-center">H\u00e0nh \u0111\u1ed9ng</th>
+                                            <th>Thời gian</th>
+                                            <th class="text-center">Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody id="comments-table-body">
@@ -229,20 +229,20 @@
 
                 <!-- Guests Tab -->
                 <div class="tab-pane fade" id="tab-guests" role="tabpanel">
-                    <h4 class="fw-bold mb-4">Danh s\u00e1ch kh\u00e1ch m\u1eddi</h4>
+                    <h4 class="fw-bold mb-4">Danh sách khách mời</h4>
 
                     <ul class="nav nav-pills mb-3" role="tablist">
                         <li class="nav-item">
-                            <button class="nav-link active rounded-3 me-1" onclick="dashboardGuests.filter('all', event)">T\u1ea5t c\u1ea3</button>
+                            <button class="nav-link active rounded-3 me-1" onclick="dashboardGuests.filter('all', event)">Tất cả</button>
                         </li>
                         <li class="nav-item">
                             <button class="nav-link rounded-3 me-1" onclick="dashboardGuests.filter('present', event)">
-                                <i class="fa-solid fa-circle-check text-success me-1"></i>S\u1ebd tham d\u1ef1
+                                <i class="fa-solid fa-circle-check text-success me-1"></i>Sẽ tham dự
                             </button>
                         </li>
                         <li class="nav-item">
                             <button class="nav-link rounded-3" onclick="dashboardGuests.filter('absent', event)">
-                                <i class="fa-solid fa-circle-xmark text-danger me-1"></i>Ch\u01b0a ch\u1eafc
+                                <i class="fa-solid fa-circle-xmark text-danger me-1"></i>Chưa chắc
                             </button>
                         </li>
                     </ul>
@@ -254,9 +254,9 @@
                                     <thead class="table-light">
                                         <tr>
                                             <th class="ps-4">#</th>
-                                            <th>T\u00ean</th>
-                                            <th class="text-center">Tr\u1ea1ng th\u00e1i</th>
-                                            <th>Th\u1eddi gian</th>
+                                            <th>Tên</th>
+                                            <th class="text-center">Trạng thái</th>
+                                            <th>Thời gian</th>
                                         </tr>
                                     </thead>
                                     <tbody id="guests-table-body">
@@ -274,26 +274,26 @@
 
                 <!-- Settings Tab -->
                 <div class="tab-pane fade" id="tab-settings" role="tabpanel">
-                    <h4 class="fw-bold mb-4">C\u00e0i \u0111\u1eb7t</h4>
+                    <h4 class="fw-bold mb-4">Cài đặt</h4>
 
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="card border-0 rounded-4 shadow-sm">
                                 <div class="card-header bg-white rounded-top-4 border-bottom py-3 px-4">
-                                    <h6 class="fw-bold mb-0"><i class="fa-solid fa-sliders me-2"></i>Ch\u1ee9c n\u0103ng b\u00ecnh lu\u1eadn</h6>
+                                    <h6 class="fw-bold mb-0"><i class="fa-solid fa-sliders me-2"></i>Chức năng bình luận</h6>
                                 </div>
                                 <div class="card-body p-4">
                                     <div class="form-check form-switch mb-3">
                                         <input class="form-check-input" type="checkbox" id="setting-reply" checked onchange="dashboardSettings.save()">
-                                        <label class="form-check-label" for="setting-reply">Cho ph\u00e9p tr\u1ea3 l\u1eddi b\u00ecnh lu\u1eadn</label>
+                                        <label class="form-check-label" for="setting-reply">Cho phép trả lời bình luận</label>
                                     </div>
                                     <div class="form-check form-switch mb-3">
                                         <input class="form-check-input" type="checkbox" id="setting-edit" checked onchange="dashboardSettings.save()">
-                                        <label class="form-check-label" for="setting-edit">Cho ph\u00e9p s\u1eeda b\u00ecnh lu\u1eadn</label>
+                                        <label class="form-check-label" for="setting-edit">Cho phép sửa bình luận</label>
                                     </div>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="setting-delete" checked onchange="dashboardSettings.save()">
-                                        <label class="form-check-label" for="setting-delete">Cho ph\u00e9p x\u00f3a b\u00ecnh lu\u1eadn</label>
+                                        <label class="form-check-label" for="setting-delete">Cho phép xóa bình luận</label>
                                     </div>
                                 </div>
                             </div>
@@ -302,12 +302,12 @@
                         <div class="col-md-6">
                             <div class="card border-0 rounded-4 shadow-sm">
                                 <div class="card-header bg-white rounded-top-4 border-bottom py-3 px-4">
-                                    <h6 class="fw-bold mb-0"><i class="fa-solid fa-database me-2"></i>D\u1eef li\u1ec7u</h6>
+                                    <h6 class="fw-bold mb-0"><i class="fa-solid fa-database me-2"></i>Dữ liệu</h6>
                                 </div>
                                 <div class="card-body p-4">
-                                    <p class="text-muted small mb-3">X\u00f3a to\u00e0n b\u1ed9 d\u1eef li\u1ec7u b\u00ecnh lu\u1eadn. H\u00e0nh \u0111\u1ed9ng n\u00e0y kh\u00f4ng th\u1ec3 ho\u00e0n t\u00e1c.</p>
+                                    <p class="text-muted small mb-3">Xóa toàn bộ dữ liệu bình luận. Hành động này không thể hoàn tác.</p>
                                     <button class="btn btn-outline-danger rounded-3 btn-sm" onclick="dashboardSettings.clearAllComments()">
-                                        <i class="fa-solid fa-trash me-1"></i>X\u00f3a t\u1ea5t c\u1ea3 b\u00ecnh lu\u1eadn
+                                        <i class="fa-solid fa-trash me-1"></i>Xóa tất cả bình luận
                                     </button>
                                 </div>
                             </div>
@@ -316,11 +316,11 @@
                         <div class="col-md-6">
                             <div class="card border-0 rounded-4 shadow-sm">
                                 <div class="card-header bg-white rounded-top-4 border-bottom py-3 px-4">
-                                    <h6 class="fw-bold mb-0"><i class="fa-solid fa-user-shield me-2"></i>T\u00e0i kho\u1ea3n Admin</h6>
+                                    <h6 class="fw-bold mb-0"><i class="fa-solid fa-user-shield me-2"></i>Tài khoản Admin</h6>
                                 </div>
                                 <div class="card-body p-4">
                                     <p class="text-muted small mb-2">Email: <strong id="settings-admin-email"></strong></p>
-                                    <p class="text-muted small mb-0">Qu\u1ea3n l\u00fd t\u00e0i kho\u1ea3n qua <a href="https://console.firebase.google.com" target="_blank">Firebase Console</a></p>
+                                    <p class="text-muted small mb-0">Quản lý tài khoản qua <a href="https://console.firebase.google.com" target="_blank">Firebase Console</a></p>
                                 </div>
                             </div>
                         </div>

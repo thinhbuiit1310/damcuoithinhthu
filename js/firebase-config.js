@@ -2,8 +2,8 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-// TODO: Thay th\u1ebf b\u1eb1ng Firebase config c\u1ee7a b\u1ea1n
-// L\u1ea5y t\u1eeb Firebase Console > Project Settings > General > Your apps > SDK setup and configuration
+// TODO: Thay thế bằng Firebase config của bạn
+// Lấy từ Firebase Console > Project Settings > General > Your apps > SDK setup and configuration
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -18,7 +18,7 @@ const hasPlaceholder = Object.values(firebaseConfig).some(
 );
 
 if (hasPlaceholder) {
-    throw new Error('Firebase config ch\u01b0a \u0111\u01b0\u1ee3c c\u1eadp nh\u1eadt. Vui l\u00f2ng s\u1eeda js/firebase-config.js tr\u01b0\u1edbc khi deploy.');
+    throw new Error('Firebase config chưa được cập nhật. Vui lòng sửa js/firebase-config.js trước khi deploy.');
 }
 
 const app = initializeApp(firebaseConfig);

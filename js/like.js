@@ -40,7 +40,7 @@ export const like = (() => {
                 info.setAttribute('data-count-like', String(getCount() + 1));
             }
         } catch (err) {
-            console.error('L\u1ed7i like:', err);
+            console.error('Lỗi like:', err);
         }
 
         info.innerText = `${getCount()} like`;
