@@ -1,8 +1,9 @@
+import { db } from './firebase-config.js';
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { audio } from './audio.js';
 import { theme } from './theme.js';
 import { comment } from './comment.js';
 import { storage } from './storage.js';
-import { request, HTTP_GET } from './request.js';
 
 export const util = (() => {
 
@@ -58,19 +59,19 @@ export const util = (() => {
 
     const guest = () => {
         const name = (new URLSearchParams(window.location.search)).get('to');
-        const guest = document.getElementById('guest-name');
+        const guestEl = document.getElementById('guest-name');
 
         if (!name) {
-            guest.remove();
+            guestEl.remove();
             return;
         }
 
         const div = document.createElement('div');
         div.classList.add('m-2');
-        div.innerHTML = `<p class="mt-0 mb-1 mx-0 p-0 text-light">${guest.getAttribute('data-message')}</p><h2 class="text-light">${escapeHtml(name)}</h2>`;
+        div.innerHTML = `<p class="mt-0 mb-1 mx-0 p-0 text-light">${guestEl.getAttribute('data-message')}</p><h2 class="text-light">${escapeHtml(name)}</h2>`;
 
         document.getElementById('form-name').value = name;
-        guest.appendChild(div);
+        guestEl.appendChild(div);
     };
 
     const show = () => {
@@ -162,19 +163,28 @@ export const util = (() => {
         })();
     };
 
-    const storeConfig = async (token) => {
-        storage('session').set('token', token);
-
+    const loadConfig = async () => {
         const config = storage('config');
-        return await request(HTTP_GET, '/api/config')
-            .token(token)
-            .then((res) => {
-                for (let [key, value] of Object.entries(res.data)) {
+        try {
+            const configDoc = await getDoc(doc(db, 'config', 'settings'));
+            if (configDoc.exists()) {
+                const data = configDoc.data();
+                for (let [key, value] of Object.entries(data)) {
                     config.set(key, value);
                 }
-
-                return res.code;
-            });
+            } else {
+                config.set('can_reply', true);
+                config.set('can_edit', true);
+                config.set('can_delete', true);
+            }
+            return true;
+        } catch (err) {
+            console.error('Lỗi tải config:', err);
+            config.set('can_reply', true);
+            config.set('can_edit', true);
+            config.set('can_delete', true);
+            return true;
+        }
     };
 
     const open = async (button) => {
@@ -198,9 +208,8 @@ export const util = (() => {
         audio.showButton();
         document.getElementById('button-theme').style.display = 'block';
 
-        const token = document.querySelector('body').getAttribute('data-key');
-        const status = await storeConfig(token);
-        if (status === 200) {
+        const configLoaded = await loadConfig();
+        if (configLoaded) {
             animation();
             comment.comment();
         }
@@ -217,5 +226,5 @@ export const util = (() => {
         escapeHtml,
         countDownDate,
         disableButton,
-    }
+    };
 })();
