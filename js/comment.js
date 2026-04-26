@@ -1,8 +1,4 @@
-import { db, auth } from './firebase-config.js';
-import {
-    collection, addDoc, doc, getDoc, getDocs, updateDoc, deleteDoc,
-    query, where, orderBy, limit, startAfter, serverTimestamp, increment
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { api } from './api.js';
 import { card } from './card.js';
 import { util } from './util.js';
 import { theme } from './theme.js';
@@ -13,11 +9,6 @@ export const comment = (() => {
 
     const owns = storage('owns');
     const config = storage('config');
-    const pageDocCache = {};
-
-    const clearPageCache = () => {
-        Object.keys(pageDocCache).forEach((k) => delete pageDocCache[k]);
-    };
 
     const remove = async (button) => {
         if (!confirm('Bạn chắc chắn chưa?')) {
@@ -28,11 +19,14 @@ export const comment = (() => {
         const btn = util.disableButton(button);
 
         try {
-            await deleteDoc(doc(db, 'comments', id));
+            await api.update((data) => {
+                data.comments = data.comments.filter((c) => c.id !== id);
+                return data;
+            });
+
             const el = document.getElementById(id);
             if (el) el.remove();
             owns.unset(id);
-            clearPageCache();
         } catch (err) {
             alert('Lỗi khi xóa: ' + err.message);
         }
@@ -69,18 +63,23 @@ export const comment = (() => {
         const btn = util.disableButton(button);
 
         try {
-            const updateData = { comment: form.value, updatedAt: serverTimestamp() };
-            if (presence) {
-                updateData.presence = presence.value === "1";
-            }
-            await updateDoc(doc(db, 'comments', id), updateData);
+            await api.update((data) => {
+                const idx = data.comments.findIndex((c) => c.id === id);
+                if (idx !== -1) {
+                    data.comments[idx].comment = form.value;
+                    data.comments[idx].updatedAt = new Date().toISOString();
+                    if (presence) {
+                        data.comments[idx].presence = presence.value === "1";
+                    }
+                }
+                return data;
+            });
 
             form.disabled = false;
             if (cancel) cancel.disabled = false;
             if (presence) presence.disabled = false;
             btn.restore();
 
-            clearPageCache();
             fetchComments();
         } catch (err) {
             form.disabled = false;
@@ -106,11 +105,6 @@ export const comment = (() => {
             return;
         }
 
-        if (!auth.currentUser) {
-            alert('Đang kết nối, vui lòng thử lại sau giây lát.');
-            return;
-        }
-
         if (presence) presence.disabled = true;
 
         const form = document.getElementById(`form-${id ? `inner-${id}` : 'comment'}`);
@@ -122,19 +116,25 @@ export const comment = (() => {
         const btn = util.disableButton(button);
 
         try {
+            const commentId = api.generateId();
             const commentData = {
+                id: commentId,
                 name: name.value,
                 comment: form.value,
                 presence: presence ? presence.value === "1" : true,
                 parentId: id || null,
                 likes: 0,
                 isAdmin: false,
-                ownerId: auth.currentUser.uid,
-                createdAt: serverTimestamp()
+                ownerId: api.getOwnerId(),
+                createdAt: new Date().toISOString()
             };
 
-            const docRef = await addDoc(collection(db, 'comments'), commentData);
-            owns.set(docRef.id, true);
+            await api.update((data) => {
+                data.comments.push(commentData);
+                return data;
+            });
+
+            owns.set(commentId, true);
 
             form.value = '';
             if (presence) presence.value = "0";
@@ -150,7 +150,6 @@ export const comment = (() => {
                 if (innerEl) innerEl.remove();
             }
 
-            clearPageCache();
             fetchComments();
         } catch (err) {
             form.disabled = false;
@@ -203,10 +202,10 @@ export const comment = (() => {
         button.innerText = 'Loading..';
 
         try {
-            const docSnap = await getDoc(doc(db, 'comments', id));
+            const data = await api.read(true);
+            const c = data.comments.find((c) => c.id === id);
 
-            if (docSnap.exists()) {
-                const data = docSnap.data();
+            if (c) {
                 const inner = document.createElement('div');
                 inner.classList.add('my-2');
                 inner.id = `inner-${id}`;
@@ -214,8 +213,8 @@ export const comment = (() => {
                 <label for="form-inner-${id}" class="form-label">Sửa</label>
                 ${document.getElementById(id).getAttribute('data-parent') === 'true' ? `
                 <select class="form-select shadow-sm mb-2" id="form-inner-presence-${id}">
-                    <option value="1" ${data.presence ? 'selected' : ''}>Chắc chắn có mặt</option>
-                    <option value="2" ${data.presence ? '' : 'selected'}>Chưa chắc chắn</option>
+                    <option value="1" ${c.presence ? 'selected' : ''}>Chắc chắn có mặt</option>
+                    <option value="2" ${c.presence ? '' : 'selected'}>Chưa chắc chắn</option>
                 </select>` : ''}
                 <textarea class="form-control shadow-sm rounded-3 mb-2" id="form-inner-${id}" placeholder="Nhập nội dung cập nhật"></textarea>
                 <div class="d-flex flex-wrap justify-content-end align-items-center mb-0">
@@ -224,7 +223,7 @@ export const comment = (() => {
                 </div>`;
 
                 document.getElementById(`button-${id}`).insertAdjacentElement('afterend', inner);
-                document.getElementById(`form-inner-${id}`).value = data.comment;
+                document.getElementById(`form-inner-${id}`).value = c.comment;
             } else {
                 changeButton(id, false);
                 alert('Bình luận không còn tồn tại.');
@@ -237,125 +236,73 @@ export const comment = (() => {
         button.innerText = tmp;
     };
 
+    const formatDate = (isoString) => {
+        if (!isoString) return '';
+        const date = new Date(isoString);
+        const pad = (n) => n.toString().padStart(2, '0');
+        return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    };
+
     const fetchComments = async () => {
         card.renderLoading();
 
         try {
+            const data = await api.read(true);
+            const allComments = data.comments || [];
+
+            const parentComments = allComments
+                .filter((c) => !c.parentId)
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
             const perPage = pagination.getPer();
             const nextStart = pagination.getNext();
-            const pageIndex = perPage > 0 ? Math.floor(nextStart / perPage) : 0;
 
-            let q;
+            const pageComments = parentComments.slice(nextStart, nextStart + perPage);
+            pagination.setResultData(pageComments.length);
 
-            if (pageIndex === 0) {
-                q = query(
-                    collection(db, 'comments'),
-                    where('parentId', '==', null),
-                    orderBy('createdAt', 'desc'),
-                    limit(perPage)
-                );
-            } else if (pageDocCache[pageIndex - 1]) {
-                q = query(
-                    collection(db, 'comments'),
-                    where('parentId', '==', null),
-                    orderBy('createdAt', 'desc'),
-                    startAfter(pageDocCache[pageIndex - 1]),
-                    limit(perPage)
-                );
-            } else {
-                const skipQuery = query(
-                    collection(db, 'comments'),
-                    where('parentId', '==', null),
-                    orderBy('createdAt', 'desc'),
-                    limit(nextStart)
-                );
-                const skipSnap = await getDocs(skipQuery);
-                const docs = skipSnap.docs;
-                if (docs.length > 0) {
-                    const lastDoc = docs[docs.length - 1];
-                    pageDocCache[pageIndex - 1] = lastDoc;
-                    q = query(
-                        collection(db, 'comments'),
-                        where('parentId', '==', null),
-                        orderBy('createdAt', 'desc'),
-                        startAfter(lastDoc),
-                        limit(perPage)
-                    );
-                } else {
-                    q = query(
-                        collection(db, 'comments'),
-                        where('parentId', '==', null),
-                        orderBy('createdAt', 'desc'),
-                        limit(perPage)
-                    );
-                }
-            }
-
-            const snapshot = await getDocs(q);
             const comments = document.getElementById('comments');
-            pagination.setResultData(snapshot.docs.length);
 
-            if (snapshot.docs.length > 0) {
-                pageDocCache[pageIndex] = snapshot.docs[snapshot.docs.length - 1];
-            }
-
-            if (snapshot.docs.length === 0) {
+            if (pageComments.length === 0) {
                 comments.innerHTML = `<div class="h6 text-center fw-bold p-4 my-3 bg-theme-${theme.isDarkMode('dark', 'light')} rounded-4 shadow">Hãy là người đầu tiên gửi lời chúc nhé!</div>`;
                 return;
             }
 
-            const parentComments = [];
-            for (const docSnap of snapshot.docs) {
-                const data = docSnap.data();
-                const parentComment = {
-                    uuid: docSnap.id,
-                    name: data.name,
-                    comment: data.comment,
-                    presence: data.presence,
-                    likes: data.likes || 0,
-                    like: { love: data.likes || 0 },
-                    is_admin: data.isAdmin || false,
-                    ownerId: data.ownerId || null,
-                    created_at: data.createdAt ? formatDate(data.createdAt.toDate()) : '',
-                    comments: []
-                };
+            const rendered = pageComments.map((parent) => {
+                const replies = allComments
+                    .filter((c) => c.parentId === parent.id)
+                    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-                const repliesQuery = query(
-                    collection(db, 'comments'),
-                    where('parentId', '==', docSnap.id),
-                    orderBy('createdAt', 'asc')
-                );
-                const repliesSnap = await getDocs(repliesQuery);
-                parentComment.comments = repliesSnap.docs.map((r) => {
-                    const rd = r.data();
-                    return {
+                return card.renderContent({
+                    uuid: parent.id,
+                    name: parent.name,
+                    comment: parent.comment,
+                    presence: parent.presence,
+                    likes: parent.likes || 0,
+                    like: { love: parent.likes || 0 },
+                    is_admin: parent.isAdmin || false,
+                    ownerId: parent.ownerId || null,
+                    created_at: formatDate(parent.createdAt),
+                    comments: replies.map((r) => ({
                         uuid: r.id,
-                        name: rd.name,
-                        comment: rd.comment,
-                        presence: rd.presence,
-                        likes: rd.likes || 0,
-                        like: { love: rd.likes || 0 },
-                        is_admin: rd.isAdmin || false,
-                        ownerId: rd.ownerId || null,
-                        created_at: rd.createdAt ? formatDate(rd.createdAt.toDate()) : '',
+                        name: r.name,
+                        comment: r.comment,
+                        presence: r.presence,
+                        likes: r.likes || 0,
+                        like: { love: r.likes || 0 },
+                        is_admin: r.isAdmin || false,
+                        ownerId: r.ownerId || null,
+                        created_at: formatDate(r.createdAt),
                         comments: []
-                    };
+                    }))
                 });
+            });
 
-                parentComments.push(parentComment);
-            }
-
-            comments.innerHTML = parentComments.map((c) => card.renderContent(c)).join('');
+            comments.innerHTML = rendered.join('');
         } catch (err) {
             console.error('Lỗi tải comments:', err);
             const comments = document.getElementById('comments');
             comments.innerHTML = `<div class="h6 text-center fw-bold p-4 my-3 bg-theme-${theme.isDarkMode('dark', 'light')} rounded-4 shadow text-danger">Lỗi tải dữ liệu. Vui lòng thử lại.</div>`;
         }
-    };
-
-    const formatDate = (date) => {
-        const pad = (n) => n.toString().padStart(2, '0');
-        return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
     };
 
     return {

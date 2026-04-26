@@ -1,24 +1,8 @@
-import { db, auth } from './firebase-config.js';
-import {
-    collection, getDocs, deleteDoc, doc, getDoc, setDoc, query, where, orderBy, limit, serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import {
-    signInWithEmailAndPassword, signOut, onAuthStateChanged
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-
-const deleteReplies = async (parentId) => {
-    const repliesSnap = await getDocs(query(
-        collection(db, 'comments'),
-        where('parentId', '==', parentId)
-    ));
-    const promises = repliesSnap.docs.map((d) => deleteDoc(doc(db, 'comments', d.id)));
-    await Promise.all(promises);
-};
+import { api } from './api.js';
 
 // ==================== AUTH ====================
 const dashboardAuth = (() => {
     const login = async () => {
-        const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
         const errorEl = document.getElementById('login-error');
         const btn = document.getElementById('btn-login');
@@ -28,9 +12,16 @@ const dashboardAuth = (() => {
         errorEl.style.display = 'none';
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const hash = await api.sha256(password);
+            if (hash === api.getAdminHash()) {
+                sessionStorage.setItem('isAdmin', 'true');
+                initDashboard();
+            } else {
+                errorEl.textContent = 'Mật khẩu không đúng';
+                errorEl.style.display = 'block';
+            }
         } catch (err) {
-            errorEl.textContent = getErrorMessage(err.code);
+            errorEl.textContent = 'Lỗi đăng nhập. Vui lòng thử lại.';
             errorEl.style.display = 'block';
         }
 
@@ -38,20 +29,11 @@ const dashboardAuth = (() => {
         btn.innerHTML = '<i class="fa-solid fa-right-to-bracket me-1"></i>Đăng nhập';
     };
 
-    const logout = async () => {
+    const logout = () => {
         if (!confirm('Bạn chắc chắn muốn đăng xuất?')) return;
-        await signOut(auth);
-    };
-
-    const getErrorMessage = (code) => {
-        switch (code) {
-            case 'auth/user-not-found': return 'Tài khoản không tồn tại';
-            case 'auth/wrong-password': return 'Mật khẩu không đúng';
-            case 'auth/invalid-email': return 'Email không hợp lệ';
-            case 'auth/invalid-credential': return 'Thông tin đăng nhập không đúng';
-            case 'auth/too-many-requests': return 'Quá nhiều lần thử. Vui lòng đợi.';
-            default: return 'Lỗi đăng nhập. Vui lòng thử lại.';
-        }
+        sessionStorage.removeItem('isAdmin');
+        document.getElementById('app-container').style.display = 'none';
+        (new bootstrap.Modal(document.getElementById('loginModal'))).show();
     };
 
     return { login, logout };
@@ -61,18 +43,18 @@ const dashboardAuth = (() => {
 const dashboardStats = (() => {
     const load = async () => {
         try {
-            const snapshot = await getDocs(collection(db, 'comments'));
-            let totalComments = 0;
+            const data = await api.read(true);
+            const comments = data.comments || [];
+
+            let totalComments = comments.length;
             let totalLikes = 0;
             let present = 0;
             let absent = 0;
 
-            snapshot.docs.forEach((d) => {
-                const data = d.data();
-                totalComments++;
-                totalLikes += data.likes || 0;
-                if (data.parentId === null) {
-                    if (data.presence === true) present++;
+            comments.forEach((c) => {
+                totalLikes += c.likes || 0;
+                if (!c.parentId) {
+                    if (c.presence === true) present++;
                     else absent++;
                 }
             });
@@ -99,24 +81,19 @@ const dashboardComments = (() => {
             .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
     };
 
-    const formatDate = (date) => {
-        if (!date) return '';
-        const d = date.toDate ? date.toDate() : new Date(date);
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
         const pad = (n) => n.toString().padStart(2, '0');
         return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     };
 
     const load = async () => {
         try {
-            const snapshot = await getDocs(query(
-                collection(db, 'comments'),
-                orderBy('createdAt', 'desc')
-            ));
-
-            allComments = snapshot.docs.map((d) => ({
-                id: d.id,
-                ...d.data()
-            }));
+            const data = await api.read(true);
+            allComments = (data.comments || [])
+                .slice()
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             renderTable(allComments);
             renderRecent(allComments.slice(0, 5));
@@ -184,8 +161,11 @@ const dashboardComments = (() => {
         if (!confirm('Bạn chắc chắn muốn xóa lời chúc này?')) return;
 
         try {
-            await deleteReplies(id);
-            await deleteDoc(doc(db, 'comments', id));
+            await api.update((data) => {
+                data.comments = data.comments.filter((c) => c.id !== id && c.parentId !== id);
+                return data;
+            });
+
             allComments = allComments.filter((c) => c.id !== id && c.parentId !== id);
             renderTable(allComments);
             renderRecent(allComments.slice(0, 5));
@@ -230,7 +210,7 @@ const dashboardComments = (() => {
                 return `${name},${comment},${presence},${likes},${date}`;
             }).join('\n');
 
-        const bom = '﻿';
+        const bom = '\uFEFF';
         const blob = new Blob([bom + header + rows], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
@@ -252,25 +232,19 @@ const dashboardGuests = (() => {
         return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     };
 
-    const formatDate = (date) => {
-        if (!date) return '';
-        const d = date.toDate ? date.toDate() : new Date(date);
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
         const pad = (n) => n.toString().padStart(2, '0');
         return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     };
 
     const load = async () => {
         try {
-            const snapshot = await getDocs(query(
-                collection(db, 'comments'),
-                where('parentId', '==', null),
-                orderBy('createdAt', 'desc')
-            ));
-
-            allGuests = snapshot.docs.map((d) => ({
-                id: d.id,
-                ...d.data()
-            }));
+            const data = await api.read(true);
+            allGuests = (data.comments || [])
+                .filter((c) => !c.parentId)
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             renderTable(allGuests);
         } catch (err) {
@@ -322,13 +296,11 @@ const dashboardGuests = (() => {
 const dashboardSettings = (() => {
     const load = async () => {
         try {
-            const configDoc = await getDoc(doc(db, 'config', 'settings'));
-            if (configDoc.exists()) {
-                const data = configDoc.data();
-                document.getElementById('setting-reply').checked = data.can_reply !== false;
-                document.getElementById('setting-edit').checked = data.can_edit !== false;
-                document.getElementById('setting-delete').checked = data.can_delete !== false;
-            }
+            const data = await api.read();
+            const config = data.config || {};
+            document.getElementById('setting-reply').checked = config.can_reply !== false;
+            document.getElementById('setting-edit').checked = config.can_edit !== false;
+            document.getElementById('setting-delete').checked = config.can_delete !== false;
         } catch (err) {
             console.error('Lỗi tải settings:', err);
         }
@@ -336,12 +308,15 @@ const dashboardSettings = (() => {
 
     const save = async () => {
         try {
-            await setDoc(doc(db, 'config', 'settings'), {
-                can_reply: document.getElementById('setting-reply').checked,
-                can_edit: document.getElementById('setting-edit').checked,
-                can_delete: document.getElementById('setting-delete').checked,
-                updatedAt: serverTimestamp()
+            await api.update((data) => {
+                data.config = {
+                    can_reply: document.getElementById('setting-reply').checked,
+                    can_edit: document.getElementById('setting-edit').checked,
+                    can_delete: document.getElementById('setting-delete').checked
+                };
+                return data;
             });
+            alert('Đã lưu cài đặt!');
         } catch (err) {
             alert('Lỗi lưu cài đặt: ' + err.message);
         }
@@ -352,9 +327,10 @@ const dashboardSettings = (() => {
         if (!confirm('Xác nhận lần cuối: Xóa tất cả?')) return;
 
         try {
-            const snapshot = await getDocs(collection(db, 'comments'));
-            const deletePromises = snapshot.docs.map((d) => deleteDoc(doc(db, 'comments', d.id)));
-            await Promise.all(deletePromises);
+            await api.update((data) => {
+                data.comments = [];
+                return data;
+            });
 
             alert('Đã xóa tất cả bình luận!');
             dashboardComments.refresh();
@@ -366,30 +342,27 @@ const dashboardSettings = (() => {
     return { load, save, clearAllComments };
 })();
 
-// ==================== AUTH STATE ====================
-onAuthStateChanged(auth, (user) => {
-    if (user && user.emailVerified) {
-        const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-        if (modal) modal.hide();
+// ==================== INIT ====================
+const initDashboard = () => {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+    if (modal) modal.hide();
 
-        document.getElementById('app-container').style.display = 'block';
-        document.getElementById('admin-email').textContent = user.email;
-        document.getElementById('settings-admin-email').textContent = user.email;
+    document.getElementById('app-container').style.display = 'block';
+    document.getElementById('admin-email').textContent = 'Admin';
 
-        dashboardStats.load();
-        dashboardComments.load();
-        dashboardGuests.load();
-        dashboardSettings.load();
-    } else if (user && !user.emailVerified) {
-        signOut(auth);
-        const errorEl = document.getElementById('login-error');
-        errorEl.textContent = 'Email chưa được xác minh. Vui lòng xác minh email trước khi đăng nhập.';
-        errorEl.style.display = 'block';
-    } else {
-        document.getElementById('app-container').style.display = 'none';
-        (new bootstrap.Modal(document.getElementById('loginModal'))).show();
-    }
-});
+    dashboardStats.load();
+    dashboardComments.load();
+    dashboardGuests.load();
+    dashboardSettings.load();
+};
+
+// Check session on load
+if (sessionStorage.getItem('isAdmin') === 'true') {
+    initDashboard();
+} else {
+    document.getElementById('app-container').style.display = 'none';
+    (new bootstrap.Modal(document.getElementById('loginModal'))).show();
+}
 
 // ==================== EXPOSE TO WINDOW ====================
 window.dashboardAuth = dashboardAuth;
