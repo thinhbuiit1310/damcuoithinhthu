@@ -233,15 +233,15 @@
 
                     <ul class="nav nav-pills mb-3" role="tablist">
                         <li class="nav-item">
-                            <button class="nav-link active rounded-3 me-1" onclick="dashboardGuests.filter('all')">T\u1ea5t c\u1ea3</button>
+                            <button class="nav-link active rounded-3 me-1" onclick="dashboardGuests.filter('all', event)">T\u1ea5t c\u1ea3</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link rounded-3 me-1" onclick="dashboardGuests.filter('present')">
+                            <button class="nav-link rounded-3 me-1" onclick="dashboardGuests.filter('present', event)">
                                 <i class="fa-solid fa-circle-check text-success me-1"></i>S\u1ebd tham d\u1ef1
                             </button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link rounded-3" onclick="dashboardGuests.filter('absent')">
+                            <button class="nav-link rounded-3" onclick="dashboardGuests.filter('absent', event)">
                                 <i class="fa-solid fa-circle-xmark text-danger me-1"></i>Ch\u01b0a ch\u1eafc
                             </button>
                         </li>

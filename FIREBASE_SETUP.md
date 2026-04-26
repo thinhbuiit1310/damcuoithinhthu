@@ -67,6 +67,7 @@ firebase deploy
 ## C\u1ea5u tr\u00fac Firestore
 
 ### Collection: `comments`
+
 | Field | Type | M\u00f4 t\u1ea3 |
 |-------|------|-------|
 | name | string | T\u00ean ng\u01b0\u1eddi g\u1eedi |
@@ -76,10 +77,13 @@ firebase deploy
 | likes | number | S\u1ed1 l\u01b0\u1ee3t th\u00edch |
 | isAdmin | boolean | L\u00e0 admin hay kh\u00f4ng |
 | createdAt | timestamp | Th\u1eddi gian t\u1ea1o |
+| updatedAt | timestamp | Th\u1eddi gian c\u1eadp nh\u1eadt (khi s\u1eeda) |
 
 ### Collection: `config`
+
 | Document | Field | Type | M\u00f4 t\u1ea3 |
 |----------|-------|------|-------|
 | settings | can_reply | boolean | Cho ph\u00e9p tr\u1ea3 l\u1eddi |
 | settings | can_edit | boolean | Cho ph\u00e9p s\u1eeda |
 | settings | can_delete | boolean | Cho ph\u00e9p x\u00f3a |
+| settings | updatedAt | timestamp | Th\u1eddi gian c\u1eadp nh\u1eadt |

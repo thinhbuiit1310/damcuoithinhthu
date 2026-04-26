@@ -13,6 +13,14 @@ const firebaseConfig = {
     appId: "YOUR_APP_ID"
 };
 
+const hasPlaceholder = Object.values(firebaseConfig).some(
+    (v) => typeof v === 'string' && v.includes('YOUR_')
+);
+
+if (hasPlaceholder) {
+    throw new Error('Firebase config ch\u01b0a \u0111\u01b0\u1ee3c c\u1eadp nh\u1eadt. Vui l\u00f2ng s\u1eeda js/firebase-config.js tr\u01b0\u1edbc khi deploy.');
+}
+
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);

@@ -290,11 +290,11 @@ const dashboardGuests = (() => {
         `).join('');
     };
 
-    const filter = (type) => {
+    const filter = (type, evt) => {
         currentFilter = type;
 
         document.querySelectorAll('#tab-guests .nav-link').forEach((btn) => btn.classList.remove('active'));
-        event.target.closest('.nav-link').classList.add('active');
+        evt.target.closest('.nav-link').classList.add('active');
 
         if (type === 'all') {
             renderTable(allGuests);
