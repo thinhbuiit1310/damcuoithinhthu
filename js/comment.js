@@ -20,7 +20,7 @@ export const comment = (() => {
 
         try {
             await api.update((data) => {
-                data.comments = data.comments.filter((c) => c.id !== id);
+                data.comments = data.comments.filter((c) => c.id !== id && c.parentId !== id);
                 return data;
             });
 

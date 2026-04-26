@@ -48,7 +48,8 @@ const write = async (data) => {
 
 const update = async (updater) => {
     const data = await read(true);
-    const updated = updater(data);
+    const clone = JSON.parse(JSON.stringify(data));
+    const updated = updater(clone);
     await write(updated);
     return updated;
 };
