@@ -3,6 +3,7 @@ import config from './api-config.js';
 const API_BASE = 'https://api.jsonbin.io/v3';
 
 let cache = null;
+let pending = Promise.resolve();
 
 const sha256 = async (message) => {
     const buffer = new TextEncoder().encode(message);
@@ -46,12 +47,16 @@ const write = async (data) => {
     return data;
 };
 
-const update = async (updater) => {
-    const data = await read(true);
-    const clone = JSON.parse(JSON.stringify(data));
-    const updated = updater(clone);
-    await write(updated);
-    return updated;
+const update = (updater) => {
+    const task = pending.then(async () => {
+        const data = await read(true);
+        const clone = JSON.parse(JSON.stringify(data));
+        const updated = updater(clone);
+        await write(updated);
+        return updated;
+    });
+    pending = task.catch(() => {});
+    return task;
 };
 
 const generateId = () => {
