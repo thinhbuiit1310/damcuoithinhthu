@@ -1,0 +1,318 @@
+# Instincts generated from https://github.com/thinhbuiit1310/damcuoithinhthu
+# Generated: 2026-04-26T03:11:21.220Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: damcuoithinhthu-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: chore
+
+## Evidence
+
+- 1 commits analyzed
+- Detected conventional commit pattern
+- Examples: chore: migrate API to Firebase and redesign dashboard
+
+---
+id: damcuoithinhthu-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Commit Length
+
+## Action
+
+Write moderate-length commit messages (~53 characters)
+
+## Evidence
+
+- Average commit message length: 53 chars
+- Based on 1 commits
+
+---
+id: damcuoithinhthu-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: damcuoithinhthu-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: damcuoithinhthu-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: damcuoithinhthu-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: damcuoithinhthu-instinct-file-naming
+trigger: "When creating a new JavaScript file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Instinct File Naming
+
+## Action
+
+Name the file using camelCase
+
+## Evidence
+
+- Pattern in namingConventions.files
+
+---
+id: damcuoithinhthu-instinct-function-naming
+trigger: "When declaring a function"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Instinct Function Naming
+
+## Action
+
+Name the function using camelCase
+
+## Evidence
+
+- Pattern in namingConventions.functions
+
+---
+id: damcuoithinhthu-instinct-class-naming
+trigger: "When defining a class"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Instinct Class Naming
+
+## Action
+
+Name the class using PascalCase
+
+## Evidence
+
+- Pattern in namingConventions.classes
+
+---
+id: damcuoithinhthu-instinct-constant-naming
+trigger: "When declaring a constant"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Instinct Constant Naming
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE
+
+## Evidence
+
+- Pattern in namingConventions.constants
+
+---
+id: damcuoithinhthu-instinct-import-style
+trigger: "When importing modules"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Instinct Import Style
+
+## Action
+
+Use relative import paths
+
+## Evidence
+
+- Pattern in importStyle
+
+---
+id: damcuoithinhthu-instinct-export-style
+trigger: "When exporting modules or functions"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Instinct Export Style
+
+## Action
+
+Use named exports
+
+## Evidence
+
+- Pattern in exportStyle
+
+---
+id: damcuoithinhthu-instinct-commit-format
+trigger: "When writing a git commit message"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Instinct Commit Format
+
+## Action
+
+Start the message with 'chore:' followed by a concise description
+
+## Evidence
+
+- Seen in commit: 'chore: migrate API to Firebase and redesign dashboard'
+- Pattern in commits.prefixes
+
+---
+id: damcuoithinhthu-instinct-commit-length
+trigger: "When composing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Instinct Commit Length
+
+## Action
+
+Keep the message around 53 characters on average
+
+## Evidence
+
+- Pattern in commits.averageLength
+
+---
+id: damcuoithinhthu-instinct-error-handling
+trigger: "When handling potential errors in code"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Instinct Error Handling
+
+## Action
+
+Use try-catch blocks for error handling
+
+## Evidence
+
+- Pattern in errorHandling.style
+
+---
+id: damcuoithinhthu-instinct-test-location
+trigger: "When creating new tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: thinhbuiit1310/damcuoithinhthu
+---
+
+# Damcuoithinhthu Instinct Test Location
+
+## Action
+
+Place test files in a separate directory from source code
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation
+
