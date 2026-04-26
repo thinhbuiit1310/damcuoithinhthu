@@ -19,15 +19,6 @@ export const comment = (() => {
         Object.keys(pageDocCache).forEach((k) => delete pageDocCache[k]);
     };
 
-    const deleteReplies = async (parentId) => {
-        const repliesSnap = await getDocs(query(
-            collection(db, 'comments'),
-            where('parentId', '==', parentId)
-        ));
-        const promises = repliesSnap.docs.map((d) => deleteDoc(doc(db, 'comments', d.id)));
-        await Promise.all(promises);
-    };
-
     const remove = async (button) => {
         if (!confirm('Bạn chắc chắn chưa?')) {
             return;
@@ -37,7 +28,6 @@ export const comment = (() => {
         const btn = util.disableButton(button);
 
         try {
-            await deleteReplies(id);
             await deleteDoc(doc(db, 'comments', id));
             const el = document.getElementById(id);
             if (el) el.remove();

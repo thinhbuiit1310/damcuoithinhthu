@@ -186,7 +186,7 @@ const dashboardComments = (() => {
         try {
             await deleteReplies(id);
             await deleteDoc(doc(db, 'comments', id));
-            allComments = allComments.filter((c) => c.id !== id);
+            allComments = allComments.filter((c) => c.id !== id && c.parentId !== id);
             renderTable(allComments);
             renderRecent(allComments.slice(0, 5));
             dashboardStats.load();
@@ -368,7 +368,7 @@ const dashboardSettings = (() => {
 
 // ==================== AUTH STATE ====================
 onAuthStateChanged(auth, (user) => {
-    if (user) {
+    if (user && user.emailVerified) {
         const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
         if (modal) modal.hide();
 
@@ -380,6 +380,11 @@ onAuthStateChanged(auth, (user) => {
         dashboardComments.load();
         dashboardGuests.load();
         dashboardSettings.load();
+    } else if (user && !user.emailVerified) {
+        signOut(auth);
+        const errorEl = document.getElementById('login-error');
+        errorEl.textContent = 'Email chưa được xác minh. Vui lòng xác minh email trước khi đăng nhập.';
+        errorEl.style.display = 'block';
     } else {
         document.getElementById('app-container').style.display = 'none';
         (new bootstrap.Modal(document.getElementById('loginModal'))).show();
