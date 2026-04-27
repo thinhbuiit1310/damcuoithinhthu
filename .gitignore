@@ -5,3 +5,4 @@ SECURITY.md
 LICENSE
 .vercel
 .env*.local
+js/api-config.js
