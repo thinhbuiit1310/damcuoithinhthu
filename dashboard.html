@@ -32,12 +32,9 @@
                         <p class="text-muted small">Dashboard Quản trị</p>
                     </div>
                     <div class="mb-3">
-                        <label for="loginEmail" class="form-label small fw-semibold">Email</label>
-                        <input type="email" class="form-control rounded-3" id="loginEmail" placeholder="admin@example.com">
-                    </div>
-                    <div class="mb-3">
                         <label for="loginPassword" class="form-label small fw-semibold">Mật khẩu</label>
-                        <input type="password" class="form-control rounded-3" id="loginPassword" placeholder="••••••••">
+                        <input type="password" class="form-control rounded-3" id="loginPassword" placeholder="••••••••"
+                            onkeydown="if(event.key==='Enter')dashboardAuth.login()">
                     </div>
                     <div class="d-grid">
                         <button class="btn btn-primary rounded-3" id="btn-login" onclick="dashboardAuth.login()">
@@ -319,8 +316,8 @@
                                     <h6 class="fw-bold mb-0"><i class="fa-solid fa-user-shield me-2"></i>Tài khoản Admin</h6>
                                 </div>
                                 <div class="card-body p-4">
-                                    <p class="text-muted small mb-2">Email: <strong id="settings-admin-email"></strong></p>
-                                    <p class="text-muted small mb-0">Quản lý tài khoản qua <a href="https://console.firebase.google.com" target="_blank">Firebase Console</a></p>
+                                    <p class="text-muted small mb-2">Xác thực: <strong>Mật khẩu</strong></p>
+                                    <p class="text-muted small mb-0">Quản lý dữ liệu qua <a href="https://jsonbin.io/app/bins" target="_blank">JSONBin.io</a></p>
                                 </div>
                             </div>
                         </div>

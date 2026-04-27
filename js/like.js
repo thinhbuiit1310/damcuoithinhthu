@@ -1,5 +1,4 @@
-import { db } from './firebase-config.js';
-import { doc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { api } from './api.js';
 import { storage } from './storage.js';
 
 export const like = (() => {
@@ -23,7 +22,11 @@ export const like = (() => {
 
         try {
             if (likes.has(id)) {
-                await updateDoc(doc(db, 'comments', id), { likes: increment(-1) });
+                await api.update((data) => {
+                    const c = data.comments.find((c) => c.id === id);
+                    if (c) c.likes = Math.max(0, (c.likes || 0) - 1);
+                    return data;
+                });
                 likes.unset(id);
 
                 heart.classList.remove('fa-solid', 'text-danger');
@@ -31,7 +34,11 @@ export const like = (() => {
 
                 info.setAttribute('data-count-like', String(Math.max(0, getCount() - 1)));
             } else {
-                await updateDoc(doc(db, 'comments', id), { likes: increment(1) });
+                await api.update((data) => {
+                    const c = data.comments.find((c) => c.id === id);
+                    if (c) c.likes = (c.likes || 0) + 1;
+                    return data;
+                });
                 likes.set(id, true);
 
                 heart.classList.remove('fa-regular');

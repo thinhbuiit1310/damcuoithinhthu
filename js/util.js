@@ -1,5 +1,4 @@
-import { db } from './firebase-config.js';
-import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { api } from './api.js';
 import { audio } from './audio.js';
 import { theme } from './theme.js';
 import { comment } from './comment.js';
@@ -166,10 +165,9 @@ export const util = (() => {
     const loadConfig = async () => {
         const config = storage('config');
         try {
-            const configDoc = await getDoc(doc(db, 'config', 'settings'));
-            if (configDoc.exists()) {
-                const data = configDoc.data();
-                for (let [key, value] of Object.entries(data)) {
+            const data = await api.read();
+            if (data.config) {
+                for (let [key, value] of Object.entries(data.config)) {
                     config.set(key, value);
                 }
             } else {
