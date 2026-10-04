@@ -1,0 +1,7 @@
+.htaccess
+.user.ini
+index.php
+firestore.rules
+FIREBASE_SETUP.md
+mock-data.json
+.env.local
